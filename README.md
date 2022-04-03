@@ -7,47 +7,116 @@ Object Model Diagram
 ```mermaid
  classDiagram
 
-    User <-- SignInEntry
-    Schedule *-- WeekEntry
+    User <-- SignIn
+    User <-- Student
+    User <-- Mentor
+    User <-- Admin
+    Mentor *-- WeekEntry
+    Student -- Calendar
+    Mentor -- Calendar
+    Admin -- Calendar
+    Admin -- Mentor
+    Student -- Event
+
+    class Admin
+    Admin: +string name 
+    Admin: +string email
+    Admin: +int jNumber
+    Admin: +string role
+    Admin: string addMentor()
+    Admin: Calendar getCalendarView()
+    Admin: string changeTimeSlat(string mentor)
 
     class User
-    User: +string name 
+    User: +string fullname 
+    User: +string userName 
+    User: +string password 
     User: +string email
     User: +int jNumber
     User: +string role
     User: string changeName()
 
-    class Schedule
-    Schedule: +string subject
-    Schedule: +date startDate
-    Schedule: +date endDate
-    Schedule: type method()  
-    
+    class Event
+    Event: +string mentorName 
+    Event: +string studnetName 
+    Event: +date startDate
+    Event: +date endDate
+    Event: +void sendEmail(string mentorEmail, string studentEmail)
+
+    class Mentor
+    Mentor: +string name 
+    Mentor: +date timeSlot
+    Mentor: +string courses 
+    Mentor: Calendar getCalendarView()
+
+    class Calendar
+    Calendar: +vector<Mentors> getMentors()
+    Calendar: +vector timeSlots 
+
+
+    class Student
+    Student: +string role
+    Student: Calendar getCalendarView()
+    Student: string createEvent()
+    Student: string setRole()
+
     class WeekEntry
     WeekEntry: -string days 
     WeekEntry: -Date startTime 
     WeekEntry: -Date endTime 
 
-    class SignInEntry
-    SignInEntry: +Date clockIn
-    SignInEntry: +Date clockOut
+    class SignIn
+    SignIn: +string userName
+    SignIn: +string password
 
 
 
 ```
 
-This is a sequence diagram 
+Sequence Diagram for Admin
 
 ```mermaid 
 sequenceDiagram
-    autonumber
-    Alice->>John: Hello John, how are you?
-    loop Healthcheck
-        John->>John: Fight against hypochondria
-    end
-    Note right of John: Rational thoughts!
-    John-->>Alice: Great!
-    John->>Bob: How about you?
-    Bob-->>John: Jolly good!
-
+    actor Admin
+    Admin->>+CalendarView: getCaldentView() 
+    CalendarView-->>Admin: weekView() / error response
+    Admin->>+addMentor: create mentor class 
+    addMentor-->>Admin: Mentor has been added / error response
+    Admin->>+CalendarView: changeTimeSlot   
+    CalendarView-->>+Admin: schedule updated! / error response
 ```
+
+
+Sequence Diagram for Mentor
+
+```mermaid 
+sequenceDiagram
+    actor Mentor
+    Mentor->>+CalendarView: getCaldentView() 
+    CalendarView-->>Mentor: weekView() / error response
+    Mentor->>+CalendarView: changeTimeSlot   
+    CalendarView-->>+Mentor: schedule updated! / error response
+```
+
+
+
+
+Sequence Diagram for Student
+
+```mermaid 
+sequenceDiagram
+    actor Student
+    Student->>+signIn/signUp: getUser() 
+    signIn/signUp-->>-Student: successfully login / error response
+    signIn/signUp->>+CalendarView: getCaldentView() 
+    CalendarView-->>Student: weekView() / error response 
+    CalendarView->>Event: schedule event() / error response 
+    Event-->>Student: your appointment has be scheduled / error response 
+    Student->>Logout: logout 
+    Logout-->>Student: logout / error response 
+```
+
+
+
+
+
